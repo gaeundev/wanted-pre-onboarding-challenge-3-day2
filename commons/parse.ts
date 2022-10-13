@@ -8,6 +8,34 @@ export const markdownParser = (content: string) => {
   return innerHTML;
 };
 
+const CodeTagToBacktick = (content: string): string => {
+  return content
+    .split('`')
+    .map((v) => `<code>${v}</code>`)
+    .join('`');
+};
+
+const paragraphParse = (contents: Content[]) => {
+  return contents
+    .map((paragraph) =>
+      paragraph.type === 'text'
+        ? linkParse(paragraph.value)
+        : paragraph.type === 'inlineCode'
+        ? linkParse(CodeTagToBacktick(paragraph.value))
+        : '',
+    )
+    .join('');
+};
+
+const linkParse = (content: string) => {
+  // 현재는 링크 뒤에 텍스트가 붙히면 오류가 발생함
+  // 어떻게 regex에 해당하는 text만 뽑아해서 content에 넣어줄 수 있을지 더 찾아보기
+  const regex =
+    /(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$])/gim;
+  const linkTxt = content.replace(regex, `<a href="${content}" target="_blank">${content}</a>`);
+  return linkTxt.replace('\r\n', `<br/>`);
+};
+
 const markHTML = (child: Content) => {
   let innerHTML = '';
   try {
@@ -22,14 +50,18 @@ const markHTML = (child: Content) => {
       const list = `<ul>${listItems
         .map((value) => {
           const paragraphs = value.children[0]?.type === 'paragraph' ? value.children[0].children : [];
-          const listItem = paragraphs
-            .map((paragraph) => (paragraph.type === 'text' ? `<li>${paragraph.value}</li>` : null))
-            .join('');
-          return listItem;
+          const listItem = paragraphParse(paragraphs);
+          return `<li>${listItem}</li>`;
         })
         .join('')}</ul>`;
 
       innerHTML = list;
+    }
+
+    if (child.type && child.type === 'paragraph') {
+      const paragraph = paragraphParse(child.children);
+
+      innerHTML = paragraph;
     }
   } catch (err) {
     console.error('parsing error');
