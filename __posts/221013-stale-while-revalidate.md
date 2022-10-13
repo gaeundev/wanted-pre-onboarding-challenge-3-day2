@@ -4,6 +4,7 @@ categories:
   - Web
 date: '2022-10-13'
 description: Cache-Control 기능 중 하나인 stale-while-revalidate이란 무엇이고, 어떤 매커니즘으로 동작하는가?
+slug: stale-while-revalidate
 tags:
   - front-end
   - cache
