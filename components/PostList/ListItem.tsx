@@ -12,7 +12,7 @@ interface ListItemProps {
 const ListItem = ({ key, path, title, categories, date, description }: ListItemProps) => {
   return (
     <li key={key}>
-      <Link href={`/${path}`}>
+      <Link href={`/posts/${path}`}>
         <a>
           <h3>{title}</h3>
           <div className="post__info">

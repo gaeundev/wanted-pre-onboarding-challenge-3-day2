@@ -7,7 +7,7 @@ export const postFiles = () => {
   return fs.readdirSync(dir);
 };
 
-export const readPostFiles = async () => {
+export const readPostFiles = () => {
   const fileNames = postFiles();
 
   const filesData = fileNames.map((file) => {

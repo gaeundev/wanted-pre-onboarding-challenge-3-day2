@@ -2,7 +2,7 @@ import { GetStaticProps } from 'next';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 
-import { readPostFiles } from '@commons/fs';
+import { readPostFiles } from '@commons/fsModule';
 import { matter, MatterFunc } from '@commons/frontMatter';
 
 import ListItem from '@components/PostList/ListItem';

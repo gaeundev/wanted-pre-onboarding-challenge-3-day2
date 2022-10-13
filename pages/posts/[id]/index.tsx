@@ -1,25 +1,42 @@
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
+import useSWR, { SWRConfig } from 'swr';
 import fs from 'fs';
 
 import { matter } from '@commons/frontMatter';
-import { MatterFunc } from '@commons/frontMatter';
-import { readPostFiles } from '@commons/fs';
+import type { MatterFunc } from '@commons/frontMatter';
+import { readPostFiles } from '@commons/fsModule';
+import fetcher from '@commons/fetcher';
 
 import Title from '@components/Post/Title';
 import Content from '@components/Post/Content';
 import Tag from '@components/Post/Tag';
 
 interface PostPageProps {
-  contents: MatterFunc;
+  paramId: string;
+  fallback: { [x: string]: string };
 }
 
-const PostPage: NextPage<PostPageProps> = ({ contents: { meta, content } }) => {
+function Article({ paramId }: { paramId: string }) {
+  const { data } = useSWR(paramId, fetcher);
+
+  const contents = matter(data ? data : '', ['title', 'date', 'categories', 'tags', 'content']);
+
   return (
     <div className="post">
-      <Title meta={meta} />
-      <Content content={content ? content : ''} />
-      {meta.tags && <Tag tags={meta.tags} />}
+      <Title meta={contents.meta} />
+      <Content content={contents.content ? contents.content : ''} />
+      {contents.meta.tags && <Tag tags={contents.meta.tags} />}
     </div>
+  );
+}
+
+const PostPage: NextPage<PostPageProps> = ({ paramId, fallback }) => {
+  return (
+    <>
+      <SWRConfig value={{ fallback }}>
+        <Article paramId={paramId} />
+      </SWRConfig>
+    </>
   );
 };
 
@@ -27,7 +44,7 @@ export default PostPage;
 
 // 각 포스트를 그려줄 상세 페이지 경로를 생성
 export const getStaticPaths: GetStaticPaths = async () => {
-  const data = await readPostFiles();
+  const data = readPostFiles();
   const postLists: MatterFunc[] = data.map(({ contents }) => matter(contents, ['slug']));
 
   const params = postLists.map(({ meta: { slug } }) => {
@@ -44,8 +61,10 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps = async (context) => {
   const paramId = context.params?.id;
 
-  // 파일 명 검색
-  const files = await readPostFiles();
+  if (typeof paramId !== 'string') return { props: {} };
+
+  const files = readPostFiles();
+
   const fileName = files.filter(({ contents }) => {
     const data = matter(contents, ['slug']);
     if (paramId === data.meta.slug) {
@@ -55,9 +74,12 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
   const data = fs.readFileSync(`./__posts/${fileName[0].name}`, 'utf8');
 
-  const contents = matter(data, ['title', 'date', 'categories', 'tags', 'content']);
-
   return {
-    props: { contents },
+    props: {
+      paramId: paramId,
+      fallback: {
+        [paramId]: data,
+      },
+    },
   };
 };
