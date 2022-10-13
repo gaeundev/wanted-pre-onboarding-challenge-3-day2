@@ -8,7 +8,7 @@ export const markdownParser = (content: string) => {
   return innerHTML;
 };
 
-const CodeTagToBacktick = (content: string): string => {
+const codeTagToBacktick = (content: string): string => {
   return content
     .split('`')
     .map((v) => `<code>${v}</code>`)
@@ -21,7 +21,7 @@ const paragraphParse = (contents: Content[]) => {
       paragraph.type === 'text'
         ? linkParse(paragraph.value)
         : paragraph.type === 'inlineCode'
-        ? linkParse(CodeTagToBacktick(paragraph.value))
+        ? linkParse(codeTagToBacktick(paragraph.value))
         : '',
     )
     .join('');
