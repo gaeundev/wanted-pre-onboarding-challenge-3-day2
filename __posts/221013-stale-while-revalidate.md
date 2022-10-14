@@ -21,13 +21,14 @@ title: stale-while-revalidate 란? 매커니즘과 함께 알아보기
 - revalidate : 1. 재확인하다 2. 갱신하다
 
 이어보면, 오래된 것을 갱신한다는 뜻으로 해석된다.
-
-rfc 문서에 따르면, HTTP 응답 헤더의 `Cache-Control`에 `stale-while-revalidate`가 있는 경우, 캐시가 지정된 시간(초)까지 오래된 응답을 제공할 수 있다고 기술되어 있다.
+rfc 문서에 따르면, HTTP 응답 헤더의 `Cache-Control`에 `stale-while-revalidate`가 있는 경우,
+캐시가 지정된 시간(초)까지 오래된 응답을 제공할 수 있다고 기술되어 있다.
 
 ### Cache-Control 이란 무엇일까?
 
 HTTP 응답 헤더에 포함된 `Cache-Control` 헤더에 따라 리소스의 유효기간이 정해진다.
-`Cache-Control: max-age=100` 을 지정하게 되면 100초안에 해당 리소스를 또 요청하게 되었을 때, 브라우저는 서버에 요청을 보내지 않고 디스크 또는 메모리에서 캐시를 읽어와 재사용하는 것이다.
+`Cache-Control: max-age=100` 을 지정하게 되면 100초안에 해당 리소스를 또 요청하게 되었을 때,
+브라우저는 서버에 요청을 보내지 않고 디스크 또는 메모리에서 캐시를 읽어와 재사용하는 것이다.
 
 ## stale-while-revalidate의 매커니즘
 
