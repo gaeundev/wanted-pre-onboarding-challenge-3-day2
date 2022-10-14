@@ -55,7 +55,7 @@ h2 {
   font-size: 24px;
 }
 
-.post__list > li {
+.post__list > div > li {
   border-bottom: 1px solid #3e3e3e;
   margin-bottom: 20px;
   padding-bottom: 20px;
