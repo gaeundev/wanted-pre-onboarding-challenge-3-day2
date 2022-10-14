@@ -1,5 +1,5 @@
 interface ListWrapperProps {
-  children: JSX.Element[];
+  children: JSX.Element[] | JSX.Element;
 }
 
 const ListWrapper = ({ children }: ListWrapperProps) => {

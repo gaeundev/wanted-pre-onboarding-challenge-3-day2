@@ -1,15 +1,17 @@
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import useSWR, { SWRConfig } from 'swr';
-import fs from 'fs';
 
-import { matter } from '@commons/frontMatter';
-import type { MatterFunc } from '@commons/frontMatter';
+import { matter, type MatterFunc } from '@commons/frontMatter';
 import { readPostFiles } from '@commons/fsModule';
-import fetcher from '@commons/fetcher';
+import { fetcher, postContentFetcher } from '@commons/fetcher';
+
+import { postResponseData } from '@pages/api/posts/[id]';
 
 import Title from '@components/Post/Title';
 import Content from '@components/Post/Content';
 import Tag from '@components/Post/Tag';
+
+const getPostUrl = (slug: string) => `/api/posts/${slug}`;
 
 interface PostPageProps {
   paramId: string;
@@ -17,9 +19,12 @@ interface PostPageProps {
 }
 
 function Article({ paramId }: { paramId: string }) {
-  const { data } = useSWR(paramId, fetcher);
+  const { data, error } = useSWR(getPostUrl(paramId), fetcher);
 
-  const contents = matter(data ? data : '', ['title', 'date', 'categories', 'tags', 'content']);
+  if (error) return <>에러가 발생했습니다</>;
+  if (!data || !data.data) return <>불러오는 중🌀</>;
+
+  const contents = matter(data.data ? data.data : '', ['title', 'date', 'categories', 'tags', 'content']);
 
   return (
     <div className="post">
@@ -63,22 +68,16 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
   if (typeof paramId !== 'string') return { props: {} };
 
-  const files = readPostFiles();
+  const res: postResponseData = postContentFetcher(paramId);
+  const data = res.data;
 
-  const fileName = files.filter(({ contents }) => {
-    const data = matter(contents, ['slug']);
-    if (paramId === data.meta.slug) {
-      return true;
-    }
-  });
-
-  const data = fs.readFileSync(`./__posts/${fileName[0].name}`, 'utf8');
+  const content = matter(data ? data : '', ['title', 'date', 'categories', 'tags', 'content']);
 
   return {
     props: {
       paramId: paramId,
       fallback: {
-        [paramId]: data,
+        [getPostUrl(paramId)]: content,
       },
     },
   };

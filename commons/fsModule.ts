@@ -1,14 +1,9 @@
 import fs from 'fs';
 import path from 'path';
 
-export const postFiles = () => {
-  const dir = path.resolve('./__posts');
-
-  return fs.readdirSync(dir);
-};
-
 export const readPostFiles = () => {
-  const fileNames = postFiles();
+  const dir = path.resolve('./__posts');
+  const fileNames = fs.readdirSync(dir);
 
   const filesData = fileNames.map((file) => {
     return {
