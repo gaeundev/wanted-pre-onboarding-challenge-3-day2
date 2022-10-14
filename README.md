@@ -2,11 +2,22 @@
 
 ## 결과물
 
+### markdown으로 작성한 정적 페이지 만들기
+
 <img src='./example.jpg' width='40%'>
+
+### swr 라이브러리를 적용한 후, vercel로 배포하기
+
+<img src='./example02.jpg' width='70%'>
+
+### 배포한 페이지 링크
+
+https://next-app-gaeundev.vercel.app/
 
 ### 블로그 포스팅
 
-[과제를 진행하는 과정이 담긴 글 링크 (클릭)](https://tistory.rooteun.com/98)
+- [과제를 진행하는 과정이 담긴 글 링크 (클릭)](https://tistory.rooteun.com/98)
+- [Vercel로 앱 배포하기 포스팅(클릭)](https://tistory.rooteun.com/99)
 
 ## 실행
 
