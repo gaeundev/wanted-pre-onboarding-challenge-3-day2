@@ -7,7 +7,10 @@ import { ListResponseData } from '@pages/api/posts';
 import { postResponseData } from '@pages/api/posts/[id]';
 
 export async function fetcher(url: string) {
-  return fetch(`http://localhost:3000${url}`).then((res) => res.json());
+  const BASE_URL =
+    process.env.NODE_ENV === 'production' ? `https://next-app-gaeundev.vercel.app` : `http://localhost:3000`;
+
+  return fetch(`${BASE_URL}${url}`).then((res) => res.json());
 }
 
 export const postListsFetcher = (): ListResponseData => {
