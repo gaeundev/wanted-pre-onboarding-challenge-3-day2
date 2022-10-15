@@ -3,9 +3,7 @@ import useSWR, { SWRConfig } from 'swr';
 
 import { matter, type MatterFunc } from '@commons/frontMatter';
 import { readPostFiles } from '@commons/fsModule';
-import { fetcher, postContentFetcher } from '@commons/fetcher';
-
-import { postResponseData } from '@pages/api/posts/[id]';
+import { postContentFetcher } from '@commons/fetcher';
 
 import Title from '@components/Post/Title';
 import Content from '@components/Post/Content';
@@ -19,7 +17,7 @@ interface PostPageProps {
 }
 
 function Article({ paramId }: { paramId: string }) {
-  const { data, error } = useSWR(getPostUrl(paramId), fetcher);
+  const { data, error } = useSWR(getPostUrl(paramId));
 
   if (error) return <>에러가 발생했습니다</>;
   if (!data || !data.data) return <>불러오는 중🌀</>;
@@ -49,7 +47,7 @@ export default PostPage;
 
 // 각 포스트를 그려줄 상세 페이지 경로를 생성
 export const getStaticPaths: GetStaticPaths = async () => {
-  const data = readPostFiles();
+  const data = await readPostFiles();
   const postLists: MatterFunc[] = data.map(({ contents }) => matter(contents, ['slug']));
 
   const params = postLists.map(({ meta: { slug } }) => {
@@ -68,7 +66,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
   if (typeof paramId !== 'string') return { props: {} };
 
-  const res: postResponseData = postContentFetcher(paramId);
+  const res = await postContentFetcher(paramId);
   const data = res.data;
 
   const content = matter(data ? data : '', ['title', 'date', 'categories', 'tags', 'content']);

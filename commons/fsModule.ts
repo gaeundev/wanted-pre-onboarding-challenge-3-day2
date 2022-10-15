@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-export const readPostFiles = () => {
+export const readPostFiles = async () => {
   const dir = path.resolve('./__posts');
   const fileNames = fs.readdirSync(dir);
 

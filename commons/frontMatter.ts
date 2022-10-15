@@ -6,7 +6,7 @@ export interface Meta {
   categories?: string[];
   date?: string;
   description?: string;
-  slug?: string;
+  slug: string;
   tags?: string[];
   title?: string;
 }
@@ -21,7 +21,8 @@ export interface MatterFunc {
 export const matter = (contents: string, options?: string[]): MatterFunc => {
   const content = contents.split('\r\n');
 
-  let dataMeta: Meta = {};
+  const metaInitial = { slug: '#' };
+  let dataMeta: Meta = metaInitial;
   let dataContent = '';
 
   if (content[0] === '---') {
@@ -35,16 +36,15 @@ export const matter = (contents: string, options?: string[]): MatterFunc => {
     // 그 사이의 값들을 가져와 파싱한다.
     const metaData = content.slice(0, metaEndIdx).join('\r\n');
 
-    const meta = yaml.load(metaData);
+    const meta = yaml.load(metaData) as Meta;
 
-    dataMeta = meta ? meta : {};
+    dataMeta = meta ? meta : metaInitial;
 
     // options에 따라 리턴할 값을 정해줌
     // categories, date, description, slug, tags, title
     if (options && !options.includes('categories')) delete dataMeta.categories;
     if (options && !options.includes('date')) delete dataMeta.date;
     if (options && !options.includes('description')) delete dataMeta.description;
-    if (options && !options.includes('slug')) delete dataMeta.slug;
     if (options && !options.includes('tags')) delete dataMeta.tags;
     if (options && !options.includes('title')) delete dataMeta.title;
 
