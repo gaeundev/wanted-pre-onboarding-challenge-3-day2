@@ -1,5 +1,5 @@
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
-import useSWR, { SWRConfig } from 'swr';
+import useSWR, { SWRConfig, unstable_serialize } from 'swr';
 
 import { matter, type MatterFunc } from '@commons/frontMatter';
 import { readPostFiles } from '@commons/fsModule';
@@ -9,29 +9,29 @@ import Title from '@components/Post/Title';
 import Content from '@components/Post/Content';
 import Tag from '@components/Post/Tag';
 
-const getPostUrl = (slug: string) => `/api/posts/${slug}`;
-
 interface PostPageProps {
   paramId: string;
   fallback: { [x: string]: string };
 }
 
-function Article({ paramId }: { paramId: string }) {
-  const { data, error } = useSWR(getPostUrl(paramId));
+interface ArticleProps {
+  paramId: string;
+}
+
+const Article = ({ paramId }: ArticleProps) => {
+  const { data, error } = useSWR(['posts', paramId]);
 
   if (error) return <>에러가 발생했습니다</>;
-  if (!data || !data.data) return <>불러오는 중🌀</>;
-
-  const contents = matter(data.data ? data.data : '', ['title', 'date', 'categories', 'tags', 'content']);
+  if (!data) return <>불러오는 중🌀</>;
 
   return (
     <div className="post">
-      <Title meta={contents.meta} />
-      <Content content={contents.content ? contents.content : ''} />
-      {contents.meta.tags && <Tag tags={contents.meta.tags} />}
+      <Title meta={data.meta} />
+      <Content content={data.content ? data.content : ''} />
+      {data.meta.tags && <Tag tags={data.meta.tags} />}
     </div>
   );
-}
+};
 
 const PostPage: NextPage<PostPageProps> = ({ paramId, fallback }) => {
   return (
@@ -75,7 +75,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
     props: {
       paramId: paramId,
       fallback: {
-        [getPostUrl(paramId)]: content,
+        [unstable_serialize(['posts', paramId])]: content,
       },
     },
   };

@@ -1,34 +1,27 @@
 import { GetStaticProps } from 'next';
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import useSWR, { SWRConfig } from 'swr';
+import useSWR, { SWRConfig, unstable_serialize } from 'swr';
 
-import { matter, type MatterFunc } from '@commons/frontMatter';
+import { matter, Meta, type MatterFunc } from '@commons/frontMatter';
 import { postListsFetcher } from '@commons/fetcher';
 
 import ListItem from '@components/PostList/ListItem';
 import ListWrapper from '@components/PostList/ListWrapper';
 
 interface HomeProps {
-  postLists: MatterFunc[];
-  fallback: { '/api/posts': MatterFunc[] };
+  fallback: { [x: string]: MatterFunc[] };
 }
 
-const API = '/api/posts';
-
-function Repo() {
-  const { data, error } = useSWR(API);
+const PostList = () => {
+  const { data, error } = useSWR(['posts']);
 
   if (error) return <>에러가 발생했습니다</>;
-  if (!data || !data.data) return <>불러오는 중🌀</>;
+  if (!data) return <>불러오는 중🌀</>;
 
-  const lists: {
-    name: string;
-    contents: string;
-  }[] = data.data;
-  const postLists = lists.map(({ contents }) =>
-    matter(contents, ['title', 'slug', 'categories', 'date', 'description']),
-  );
+  const postLists: {
+    meta: Meta;
+  }[] = data;
 
   return (
     <div>
@@ -48,9 +41,9 @@ function Repo() {
         )}
     </div>
   );
-}
+};
 
-const Home: NextPage<HomeProps> = ({ postLists, fallback }) => {
+const Home: NextPage<HomeProps> = ({ fallback }) => {
   return (
     <>
       <Head>
@@ -62,7 +55,7 @@ const Home: NextPage<HomeProps> = ({ postLists, fallback }) => {
       <main>
         <SWRConfig value={{ fallback }}>
           <ListWrapper>
-            <Repo />
+            <PostList />
           </ListWrapper>
         </SWRConfig>
       </main>
@@ -80,11 +73,12 @@ export const getStaticProps: GetStaticProps = async () => {
     name: string;
     contents: string;
   }[] = res.data;
+
   const postLists: MatterFunc[] = data.map(({ contents }) =>
     matter(contents, ['title', 'slug', 'categories', 'date', 'description']),
   );
 
   return {
-    props: { postLists: postLists, fallback: { [API]: postLists } },
+    props: { fallback: { [unstable_serialize(['posts'])]: postLists } },
   };
 };
