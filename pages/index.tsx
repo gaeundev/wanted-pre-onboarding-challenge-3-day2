@@ -69,6 +69,7 @@ export default Home;
 export const getStaticProps: GetStaticProps = async () => {
   const res = await postListsFetcher();
 
+  console.log(res);
   const data: {
     name: string;
     contents: string;
