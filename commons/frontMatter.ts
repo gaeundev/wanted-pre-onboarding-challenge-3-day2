@@ -36,7 +36,13 @@ export const matter = (contents: string, options?: string[]): MatterFunc => {
     // 그 사이의 값들을 가져와 파싱한다.
     const metaData = content.slice(0, metaEndIdx).join('\r\n');
 
+    console.log('metaData parsing');
+    console.log(metaData);
+
     const meta = yaml.load(metaData) as Meta;
+
+    console.log('meta parsing');
+    console.log(meta);
 
     dataMeta = meta ? meta : metaInitial;
 
@@ -55,6 +61,8 @@ export const matter = (contents: string, options?: string[]): MatterFunc => {
     dataContent = contents;
   }
 
+  console.log('dataMeta return');
+  console.log(dataMeta);
   const data: MatterFunc = { meta: dataMeta };
 
   if (!options || options?.includes('content')) data.content = dataContent;
