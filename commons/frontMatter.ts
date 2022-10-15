@@ -19,12 +19,19 @@ export interface MatterFunc {
 /** options : categories, date, description, slug, tags, title, content
  */
 export const matter = (contents: string, options?: string[]): MatterFunc => {
-  const content = contents.split('\r\n');
+  console.log('contents ');
+  console.log(contents);
+  console.log('----------------------------------');
 
+  const content = contents.split('\r\n');
+  console.log('content split:');
+  console.log(content);
   const metaInitial = { slug: '#' };
   let dataMeta: Meta = metaInitial;
   let dataContent = '';
 
+  console.log('content [0]');
+  console.log(content[0]);
   if (content[0] === '---') {
     // meta data가 있다면
     // 첫번째 --- 를 삭제하고
@@ -36,13 +43,7 @@ export const matter = (contents: string, options?: string[]): MatterFunc => {
     // 그 사이의 값들을 가져와 파싱한다.
     const metaData = content.slice(0, metaEndIdx).join('\r\n');
 
-    console.log('metaData parsing');
-    console.log(metaData);
-
     const meta = yaml.load(metaData) as Meta;
-
-    console.log('meta parsing');
-    console.log(meta);
 
     dataMeta = meta ? meta : metaInitial;
 
