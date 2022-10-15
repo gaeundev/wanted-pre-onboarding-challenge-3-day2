@@ -10,6 +10,7 @@ interface ListItemProps {
 }
 
 const ListItem = ({ key, path, title, categories, date, description }: ListItemProps) => {
+  console.log(path);
   return (
     <li key={key}>
       <Link href={`/posts/${path}`}>
