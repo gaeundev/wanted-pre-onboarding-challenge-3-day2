@@ -16,8 +16,8 @@ https://next-app-gaeundev.vercel.app/
 
 ### 블로그 포스팅
 
-- [과제를 진행하는 과정이 담긴 글 링크 (클릭)](https://tistory.rooteun.com/98)
-- [Vercel로 앱 배포하기 포스팅(클릭)](https://tistory.rooteun.com/99)
+- [과제를 진행하는 과정이 담긴 글 링크 (클릭)](https://stirringdev.tistory.com/98)
+- [Vercel로 앱 배포하기 포스팅(클릭)](https://stirringdev.tistory.com/99)
 
 ## 실행
 
