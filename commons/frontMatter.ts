@@ -19,19 +19,12 @@ export interface MatterFunc {
 /** options : categories, date, description, slug, tags, title, content
  */
 export const matter = (contents: string, options?: string[]): MatterFunc => {
-  console.log('contents ');
-  console.log(contents);
-  console.log('----------------------------------');
+  const content = contents.split('\n');
 
-  const content = contents.split('\r\n');
-  console.log('content split:');
-  console.log(content);
   const metaInitial = { slug: '#' };
   let dataMeta: Meta = metaInitial;
   let dataContent = '';
 
-  console.log('content [0]');
-  console.log(content[0]);
   if (content[0] === '---') {
     // meta data가 있다면
     // 첫번째 --- 를 삭제하고
@@ -62,8 +55,6 @@ export const matter = (contents: string, options?: string[]): MatterFunc => {
     dataContent = contents;
   }
 
-  console.log('dataMeta return');
-  console.log(dataMeta);
   const data: MatterFunc = { meta: dataMeta };
 
   if (!options || options?.includes('content')) data.content = dataContent;

@@ -5,8 +5,6 @@ export const readPostFiles = async () => {
   const dir = path.resolve('./__posts');
   const fileNames = fs.readdirSync(dir);
 
-  console.log(fileNames);
-
   const filesData = fileNames.map((file) => {
     return {
       name: file,

@@ -19,17 +19,9 @@ const PostList = () => {
   if (error) return <>에러가 발생했습니다</>;
   if (!data) return <>불러오는 중🌀</>;
 
-  console.log('data:');
-  console.log(data);
-  console.log('-------------------------------');
-
   const postLists: {
     meta: Meta;
   }[] = data;
-
-  console.log('postLists:');
-  console.log(postLists);
-  console.log('-------------------------------');
 
   return (
     <div>
@@ -85,8 +77,6 @@ export const getStaticProps: GetStaticProps = async () => {
   const postLists: MatterFunc[] = data.map(({ contents }) =>
     matter(contents, ['title', 'slug', 'categories', 'date', 'description']),
   );
-
-  console.log(postLists);
 
   return {
     props: { fallback: { [unstable_serialize(['posts'])]: postLists } },
